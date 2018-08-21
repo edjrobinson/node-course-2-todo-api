@@ -6,6 +6,10 @@ var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
+beforeEach((done) => {
+  Todo.deleteMany({}).then(() => done());
+});
+
 var app = express();
 
 app.use(bodyParser.json()); //get the body parsed as JSON and stored as req.body
@@ -19,10 +23,10 @@ app.post('/todos', (req, res) => {
     text: req.body.text
   });
   todo.save().then((doc) => {
-    console.log('Todo saved: ', doc);
     res.send(doc);
   }, (err) => {
-    console.log('Could not save Todo: ', err);
     res.status(400).send(err);
   });
 });
+
+module.exports = {app};
