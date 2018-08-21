@@ -6,10 +6,6 @@ var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
-beforeEach((done) => {
-  Todo.deleteMany({}).then(() => done());
-});
-
 var app = express();
 
 app.use(bodyParser.json()); //get the body parsed as JSON and stored as req.body
@@ -27,6 +23,10 @@ app.post('/todos', (req, res) => {
   }, (err) => {
     res.status(400).send(err);
   });
+});
+
+app.get('/todos', (req, res) => {
+  res.send(Todo.find({}));
 });
 
 module.exports = {app};
