@@ -13,7 +13,9 @@ const todos = [
   },
   {
     _id: new ObjectID(),
-    text: 'Second test todo'
+    text: 'Second test todo',
+    completed: true,
+    completedAt: 333
   }
 ];
 
@@ -148,5 +150,48 @@ describe('DELETE /todos/:id', () => {
     .expect(404)
     .end(done);
   })
+
+});
+
+describe('PATH /todos/:id', () => {
+  it('should update the todo', (done) => {
+    //grab the ID of the first todo
+    //make our PATH request inc. sending data in the request body
+    //expect 200 status code, text as set, completed as set, completedAt is a Number
+    var id = todos[0]._id.toHexString();
+    var updatedText = 'updated text for todo';
+    request(app)
+    .patch(`/todos/${id}`)
+    .send({
+      text: updatedText,
+      completed: true
+    })
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.text).toBe(updatedText);
+      expect(res.body.todo.completed).toBe(true);
+      expect(typeof res.body.todo.completedAt).toBe('number');
+    })
+    .end(done);
+
+  });
+
+  it('should clear completedAt when todo is not completed', (done) => {
+    var id = todos[1]._id.toHexString();
+    var updatedText = 'something';
+    request(app)
+    .patch(`/todos/${id}`)
+    .send({
+      text: updatedText,
+      completed: false
+    })
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.text).toBe(updatedText);
+      expect(res.body.todo.completed).toBe(false);
+      expect(res.body.todo.completedAt).toBeFalsy();
+    })
+    .end(done);
+  });
 
 });
